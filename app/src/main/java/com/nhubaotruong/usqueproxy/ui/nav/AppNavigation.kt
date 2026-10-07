@@ -14,12 +14,16 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import com.nhubaotruong.usqueproxy.AuthTokenHolder
+import com.nhubaotruong.usqueproxy.data.ProfileType
 import com.nhubaotruong.usqueproxy.ui.screen.MainScreen
 import com.nhubaotruong.usqueproxy.ui.screen.SettingsScreen
 import com.nhubaotruong.usqueproxy.ui.screen.SplitTunnelScreen
@@ -43,8 +47,16 @@ fun AppNavigation(
     val pagerState = rememberPagerState(pageCount = { navItems.size })
     val scope = rememberCoroutineScope()
 
-    // Lightweight state poll — reads volatile booleans only, no JNI.
-    // Paused when app goes to background via repeatOnLifecycle(STARTED).
+    // Pantau deep link token: jika masuk, ubah tab ke Settings (index 2) dan switch ke ZeroTrust
+    val incomingToken by AuthTokenHolder.jwtTokenFlow.collectAsStateWithLifecycle()
+    LaunchedEffect(incomingToken) {
+        if (!incomingToken.isNullOrEmpty()) {
+            viewModel.setActiveProfile(ProfileType.ZERO_TRUST)
+            pagerState.scrollToPage(2)
+        }
+    }
+
+    // Lightweight state poll
     val lifecycleOwner = LocalLifecycleOwner.current
     LaunchedEffect(lifecycleOwner) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

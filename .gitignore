@@ -19,3 +19,5 @@ keystore.properties
 *.jks
 usque-android/
 android/
+*.apk
+*.zip

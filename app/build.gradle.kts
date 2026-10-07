@@ -18,7 +18,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.nhubaotruong.usqueproxy"
+        applicationId = "com.usqueproxy.dd"
         minSdk = 30
         targetSdk = 36
         versionCode = 7

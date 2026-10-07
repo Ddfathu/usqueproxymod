@@ -32,6 +32,15 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="com.cloudflare.warp"
+                    android:host="*.cloudflareaccess.com"
+                    android:pathPrefix="/auth" />
+            </intent-filter>
         </activity>
 
         <service
@@ -62,7 +71,7 @@
                 android:value="true" />
             <meta-data
                 android:name="android.service.quicksettings.LONG_CLICK_COMPONENT"
-                android:value="com.nhubaotruong.usqueproxy/.MainActivity" />
+                android:value="com.usqueproxy.dd/com.nhubaotruong.usqueproxy.MainActivity" />
         </service>
         <receiver
             android:name=".receiver.BootReceiver"

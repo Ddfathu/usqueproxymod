@@ -1,6 +1,7 @@
 package com.nhubaotruong.usqueproxy
 
 import android.content.Intent
+import android.net.Uri
 import android.net.VpnService
 import android.os.Bundle
 import android.os.StrictMode
@@ -19,8 +20,14 @@ import com.nhubaotruong.usqueproxy.ui.theme.UsqueProxyTheme
 import com.nhubaotruong.usqueproxy.ui.viewmodel.VpnViewModel
 import com.nhubaotruong.usqueproxy.vpn.TunnelStateHolder
 import com.nhubaotruong.usqueproxy.vpn.UsqueVpnService
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+
+object AuthTokenHolder {
+    val jwtTokenFlow = MutableStateFlow<String?>(null)
+}
 
 class MainActivity : ComponentActivity() {
 
@@ -64,6 +71,7 @@ class MainActivity : ComponentActivity() {
                 )
             }
         }
+        handleDeepLink(intent)
         handleConnectAction(intent)
 
         // Auto-connect on app start if enabled
@@ -79,7 +87,19 @@ class MainActivity : ComponentActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        setIntent(intent)
+        handleDeepLink(intent)
         handleConnectAction(intent)
+    }
+
+    private fun handleDeepLink(intent: Intent?) {
+        val uri: Uri? = intent?.data
+        if (uri != null && uri.scheme == "com.cloudflare.warp") {
+            val token = uri.getQueryParameter("token")
+            if (!token.isNullOrEmpty()) {
+                AuthTokenHolder.jwtTokenFlow.value = token
+            }
+        }
     }
 
     private fun handleConnectAction(intent: Intent?) {

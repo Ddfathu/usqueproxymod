@@ -151,7 +151,11 @@ fun SettingsScreen(viewModel: VpnViewModel) {
                     Text(if (isRegistering) "Registering..." else "Register Device")
                 }
             } else {
-                var jwt by remember { mutableStateOf("") }
+                val incomingToken by com.nhubaotruong.usqueproxy.AuthTokenHolder.jwtTokenFlow.collectAsStateWithLifecycle()
+                var jwt by remember(incomingToken) { mutableStateOf(incomingToken ?: "") }
+                androidx.compose.runtime.LaunchedEffect(incomingToken) {
+                    incomingToken?.let { jwt = it }
+                }
                 OutlinedTextField(
                     value = jwt,
                     onValueChange = { jwt = it },
