@@ -24,7 +24,7 @@ if [ -f default.pgo ]; then
 fi
 
 # -androidapi 30 = AAR minSdk (Android 11+); matches app/build.gradle.kts minSdk
-gomobile bind -v -target=android/arm64,android/amd64 -androidapi 30 \
+gomobile bind -v -target=android/arm64 -androidapi 30 \
   -trimpath \
   -ldflags="-s -w" \
   ${PGO_FLAG:+"$PGO_FLAG"} \
